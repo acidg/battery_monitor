@@ -1,0 +1,5 @@
+Release/
+lib/
+core/
+.settings/
+.ino.cpp
