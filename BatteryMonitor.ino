@@ -1,6 +1,23 @@
-/*********************************************************************
+/*
+ * Arduino based battery monitor for campers.
+ *
+ * BatteryMonitor.ino main file
+ *
+ * Copyright (C) 2017  Benedikt Schlagberger
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
 
- *********************************************************************/
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <SPI.h>
 #include <Wire.h>
@@ -9,28 +26,19 @@
 #include <Fonts/FreeSansBold24pt7b.h>
 #include <Fonts/FreeSans9pt7b.h>
 
-#define OLED_RESET 4
-#define BATTERY_FULL_RAW_VALUE 1023
-#define BATTERY_EMPTY_RAW_VALUE 856
-#define VCC_INPUT 5.0
-#define FACTOR_VOLTAGE_DIVIDER 0.014662757
-#define FACTOR_CURRENT_SENSOR VCC_INPUT / 1024 / 0.066 // ACS712 has 0.066V/A sensitivity
+#include "config.h"
+#include "VoltageSensor.h"
+#include "CurrentSensor.h"
 
-/* Rows, heights and widths */
+/* Row heights */
 #define FIRST_ROW_HEIGHT 8
-#define MIDDLE_ROW_X_START 8
-#define END_ROW_X_START 57
-#define MIDDLE_ROW_HEIGHT END_ROW_X_START - MIDDLE_ROW_X_START
-#define END_ROW_HEIGHT 8
+#define MIDDLE_ROW_HEIGHT 48
+#define END_ROW_HEIGHT SSD1306_LCDHEIGHT - FIRST_ROW_HEIGHT - MIDDLE_ROW_HEIGHT
 #define DISPLAY_X_MIDDLE SSD1306_LCDWIDTH / 2
 
 Adafruit_SSD1306 display(OLED_RESET);
-
-uint16_t raw_voltage_value = 0;
-uint16_t raw_current_value = 0;
-uint8_t percentage = 0;
-double voltage = 0;
-double current = 0;
+VoltageSensor voltage_sensor(VOLTAGE_SENSOR_PIN, SENSOR_AVG_COUNT);
+CurrentSensor current_sensor(CURRENT_SENSOR_PIN, SENSOR_AVG_COUNT);
 
 void setup() {
     Serial.begin(9600);
@@ -38,94 +46,77 @@ void setup() {
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     display.clearDisplay();
 
-    pinMode(A0, INPUT);
-    pinMode(A3, INPUT);
+    pinMode(VOLTAGE_SENSOR_PIN, INPUT);
+    pinMode(CURRENT_SENSOR_PIN, INPUT);
 }
 
 void loop() {
-	raw_voltage_value = analogRead(A0);
-	raw_current_value = analogRead(A3);
-	Serial.print("A0: ");
-	Serial.print(raw_voltage_value);
-	Serial.print(", A3: ");
-	Serial.print(raw_current_value);
-
-	percentage = 100 * raw_voltage_value / BATTERY_FULL_RAW_VALUE;
-
-	voltage = raw_voltage_value * FACTOR_VOLTAGE_DIVIDER;
-	current = ((int16_t) raw_current_value - 512) * FACTOR_CURRENT_SENSOR;
-
-	Serial.print(", V: ");
-	Serial.print(voltage);
-	Serial.print(", ");
-	Serial.print(percentage);
-	Serial.print("%, Factor: ");
-	Serial.print(FACTOR_CURRENT_SENSOR, 10);
-	Serial.print(", A: ");
-	Serial.println(current);
-
-	update_percentage();
-	update_bar();
-	update_details();
+    updatePercentage();
+    updateBar();
+    updateDetails();
 }
 
-void update_percentage() {
-    display.fillRect(0, MIDDLE_ROW_X_START, display.width(), MIDDLE_ROW_HEIGHT, BLACK);
-    display.fillRect(0, MIDDLE_ROW_X_START, display.width() * percentage/100, MIDDLE_ROW_HEIGHT, WHITE);
+void updatePercentage() {
+    uint8_t percents = voltage_sensor.getPercents();
+
+    display.fillRect(0, FIRST_ROW_HEIGHT, display.width(), MIDDLE_ROW_HEIGHT, BLACK);
+    display.fillRect(0, FIRST_ROW_HEIGHT, display.width() * percents / 100, MIDDLE_ROW_HEIGHT, WHITE);
     display.setTextColor(INVERSE);
     display.setTextWrap(false);
     display.setTextSize(1);
     display.setFont(&FreeSansBold24pt7b);
 
-    if (percentage >= 100) {
+    if (percents >= 100) {
         display.setCursor(5, 48);
         display.print("100%");
         display.display();
-    } else if (percentage < 10) {
+    } else if (percents < 10) {
         display.setCursor(30, 48);
-        display.print(percentage);
+        display.print(percents);
         display.print("%");
         display.display();
     } else {
         display.setCursor(18, 48);
-        display.print(percentage);
+        display.print(percents);
         display.print("%");
         display.display();
     }
 }
 
-void update_details() {
-    display.fillRect(0, END_ROW_X_START, display.width(), END_ROW_HEIGHT, BLACK);
+void updateDetails() {
+    display.fillRect(0, FIRST_ROW_HEIGHT + MIDDLE_ROW_HEIGHT, display.width(), END_ROW_HEIGHT, BLACK);
     display.setTextColor(WHITE);
     display.setTextWrap(false);
     display.setTextSize(1);
     display.setFont();
 
     display.setCursor(0, 57);
-    display.print(voltage, 1);
+    display.print(voltage_sensor.getVoltage(), 2);
     display.print("V ");
-    display.print(current, 1);
+    display.print(current_sensor.getCurrent(), 2);
     display.print("A ");
 
     display.display();
 }
 
-void update_bar() {
-	int8_t value = (raw_current_value - 512) / 8;
+void updateBar() {
+    int8_t value = (current_sensor.getCurrent() - 512) / 8;
 
-	// reset display area
+    // reset display area
     display.fillRect(0, 0, display.width(), FIRST_ROW_HEIGHT - 1, BLACK);
     display.drawLine(display.width() / 2, 0, DISPLAY_X_MIDDLE, FIRST_ROW_HEIGHT - 1, WHITE);
 
-	if (value != 0) {
-		uint8_t cursor_x = DISPLAY_X_MIDDLE + value;
-		if (value > 0) {
-			display.fillRect(DISPLAY_X_MIDDLE, 0, value, 3, WHITE);
-			display.fillTriangle(cursor_x, 0, cursor_x, FIRST_ROW_HEIGHT - 3, cursor_x + FIRST_ROW_HEIGHT - 3, 0, WHITE);
-		} else {
-			display.fillRect(cursor_x, 0, abs(value), 3, WHITE);
-			display.fillTriangle(cursor_x, 0, cursor_x, FIRST_ROW_HEIGHT - 3, cursor_x - FIRST_ROW_HEIGHT + 3, 0, WHITE);
-		}
+    if (value != 0) {
+        uint8_t cursor_x = DISPLAY_X_MIDDLE + value;
+        if (value > 0) {
+            display.fillRect(DISPLAY_X_MIDDLE, 0, value, 3, WHITE);
+            display.fillTriangle(cursor_x, 0, cursor_x, FIRST_ROW_HEIGHT - 3, cursor_x + FIRST_ROW_HEIGHT - 3, 0,
+            WHITE);
+        } else {
+            display.fillRect(cursor_x, 0, abs(value), 3, WHITE);
+            display.fillTriangle(cursor_x, 0, cursor_x, FIRST_ROW_HEIGHT - 3, cursor_x - FIRST_ROW_HEIGHT + 3, 0,
+            WHITE);
+        }
     }
-	display.display();
+    display.display();
 }

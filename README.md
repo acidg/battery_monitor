@@ -8,3 +8,6 @@ Voltage is measured using a voltage divider, current with a 30A hall sensor.
 * OLED I²C 0.96" SSD1306 based display (e.g. Crius CO-16)
 * Voltage divider (e.g. 10k and 5.6k Ohms) for measuring the voltage
 * Hall sensor: ACS712 30A (breakout board from ebay ~5$) for measuring the current
+
+## TODO
+* Better view handling
