@@ -1,5 +1,5 @@
 /*
- * CurrentSensor.cpp
+ * AveragedAnalogReader.h
  *
  * Copyright (C) 2017  Benedikt Schlagberger
  *
@@ -17,12 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "CurrentSensor.h"
+#ifndef ADS1015_H_
+#define ADS1015_H_
 
-CurrentSensor::CurrentSensor(uint8_t pin, uint8_t samples) : AveragedAnalogReader(pin, samples) {};
+#include "Arduino.h"
+#include "config.h"
+#include "Adafruit_ADS1015.h"
 
-float CurrentSensor::getCurrent() {
-    int16_t value = getAveragedValue();
+/**
+ * Class for reading values from the ADS1015
+ */
+class ADS1015 {
+  public:
+	ADS1015();
+	double getVoltage();
+    uint8_t getVoltagePercents();
+	double getCurrent();
+  private:
+    Adafruit_ADS1015 ads1015;
+    uint16_t getAverageValue(uint8_t channel);
+};
 
-    return (value  - 512) * FACTOR_CURRENT_SENSOR;
-}
+#endif /* ADS1015_H_ */

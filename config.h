@@ -25,11 +25,8 @@
 #define CURRENT_SENSOR_PIN A0
 #define VCC_INPUT 5.0
 
-/* Factors for conversion of bit to the unit needed. */
-#define FACTOR_VOLTAGE_DIVIDER 0.014662757 // = Maximum voltage (15V) / 1024
-
 /* Battery specifics */
-#define BATTERY_FULL_VOLTAGE 1023
+#define BATTERY_FULL_VOLTAGE 14.6
 #define BATTERY_EMPTY_VOLTAGE 12.0
 #define SENSOR_AVG_COUNT 10
 

@@ -27,8 +27,7 @@
 #include <Fonts/FreeSans9pt7b.h>
 
 #include "config.h"
-#include "VoltageSensor.h"
-#include "CurrentSensor.h"
+#include "ADS1015.h"
 
 /* Row heights */
 #define FIRST_ROW_HEIGHT 8
@@ -37,17 +36,13 @@
 #define DISPLAY_X_MIDDLE SSD1306_LCDWIDTH / 2
 
 Adafruit_SSD1306 display(OLED_RESET);
-VoltageSensor voltage_sensor(VOLTAGE_SENSOR_PIN, SENSOR_AVG_COUNT);
-CurrentSensor current_sensor(CURRENT_SENSOR_PIN, SENSOR_AVG_COUNT);
+ADS1015 ads;
 
 void setup() {
     Serial.begin(9600);
 
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     display.clearDisplay();
-
-    pinMode(VOLTAGE_SENSOR_PIN, INPUT);
-    pinMode(CURRENT_SENSOR_PIN, INPUT);
 }
 
 void loop() {
@@ -57,7 +52,7 @@ void loop() {
 }
 
 void updatePercentage() {
-    uint8_t percents = voltage_sensor.getPercents();
+    uint8_t percents = ads.getVoltagePercents();
 
     display.fillRect(0, FIRST_ROW_HEIGHT, display.width(), MIDDLE_ROW_HEIGHT, BLACK);
     display.fillRect(0, FIRST_ROW_HEIGHT, display.width() * percents / 100, MIDDLE_ROW_HEIGHT, WHITE);
@@ -91,16 +86,16 @@ void updateDetails() {
     display.setFont();
 
     display.setCursor(0, 57);
-    display.print(voltage_sensor.getVoltage(), 2);
+    display.print(ads.getVoltage(), 2);
     display.print("V ");
-    display.print(current_sensor.getCurrent(), 2);
+    display.print(ads.getCurrent(), 2);
     display.print("A ");
 
     display.display();
 }
 
 void updateBar() {
-    int8_t value = (current_sensor.getCurrent() - 512) / 8;
+    int8_t value = (ads.getCurrent() - 512) / 8;
 
     // reset display area
     display.fillRect(0, 0, display.width(), FIRST_ROW_HEIGHT - 1, BLACK);
