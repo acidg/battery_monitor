@@ -29,7 +29,7 @@
  */
 class ADS1015 {
   public:
-	ADS1015();
+	void begin();
 	double getVoltage();
     uint8_t getVoltagePercents();
 	double getCurrent();

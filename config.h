@@ -20,10 +20,11 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#define OLED_RESET 4
-#define VOLTAGE_SENSOR_PIN A3
-#define CURRENT_SENSOR_PIN A0
-#define VCC_INPUT 5.0
+#define OLED_RESET_PIN 4
+#define VCC_INPUT 5.205
+// Resistances of the voltage divider in Ohms
+#define VOLTAGE_DIVIDER_R1 100000 // Resistor near VBAT
+#define VOLTAGE_DIVIDER_R2 50000  // Resistor near GND
 
 /* Battery specifics */
 #define BATTERY_FULL_VOLTAGE 14.6

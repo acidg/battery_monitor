@@ -3,3 +3,6 @@ lib/
 core/
 .settings/
 .ino.cpp
+sloeber.ino.cpp
+.project
+.cproject

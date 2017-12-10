@@ -29,13 +29,17 @@
 #include "config.h"
 #include "ADS1015.h"
 
+#if (SSD1306_LCDHEIGHT != 64)
+#error("Height incorrect, please fix Adafruit_SSD1306.h!");
+#endif
+
 /* Row heights */
 #define FIRST_ROW_HEIGHT 8
 #define MIDDLE_ROW_HEIGHT 48
 #define END_ROW_HEIGHT SSD1306_LCDHEIGHT - FIRST_ROW_HEIGHT - MIDDLE_ROW_HEIGHT
 #define DISPLAY_X_MIDDLE SSD1306_LCDWIDTH / 2
 
-Adafruit_SSD1306 display(OLED_RESET);
+Adafruit_SSD1306 display(OLED_RESET_PIN);
 ADS1015 ads;
 
 void setup() {
@@ -43,6 +47,8 @@ void setup() {
 
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     display.clearDisplay();
+
+    ads.begin();
 }
 
 void loop() {
@@ -95,7 +101,7 @@ void updateDetails() {
 }
 
 void updateBar() {
-    int8_t value = (ads.getCurrent() - 512) / 8;
+    int8_t value = ads.getCurrent() / 30 * 64;
 
     // reset display area
     display.fillRect(0, 0, display.width(), FIRST_ROW_HEIGHT - 1, BLACK);

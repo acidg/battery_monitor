@@ -19,26 +19,26 @@
 
 #include "ADS1015.h"
 
-#define REF_VOLTAGE 6.144
+#define VOLTAGE_PER_BIT 0.003
 #define PORT_CURRENT 0
 #define PORT_VOLTAGE 1
-#define SAMPLE_COUNT 5
 
-#define FACTOR_CURRENT_SENSOR REF_VOLTAGE / 4096 / 0.066 // ACS712 has 0.066V/A sensitivity
-#define FACTOR_VOLTAGE_DIVIDER 0.014662757 // = Maximum voltage (15V) / 1024
+#define FACTOR_CURRENT_SENSOR 0.066 // ACS712 has 0.066V/A sensitivity
+#define FACTOR_VOLTAGE_DIVIDER 0.003662109 // = Maximum voltage (15V) / 4096
 
-ADS1015::ADS1015() {
-	ads1015.begin();
+void ADS1015::begin() {
 	ads1015.startComparator_SingleEnded(PORT_CURRENT, 1000);
 	ads1015.startComparator_SingleEnded(PORT_VOLTAGE, 1000);
 }
 
 double ADS1015::getVoltage() {
-	return getAverageValue(PORT_VOLTAGE);
+	return getAverageValue(PORT_VOLTAGE) * VOLTAGE_PER_BIT
+			* (VOLTAGE_DIVIDER_R1 + VOLTAGE_DIVIDER_R2) / VOLTAGE_DIVIDER_R2;
 }
 
 uint8_t ADS1015::getVoltagePercents() {
-	float percentage = (getVoltage() - BATTERY_EMPTY_VOLTAGE) / (BATTERY_FULL_VOLTAGE - BATTERY_EMPTY_VOLTAGE) * 100;
+	float percentage = (getVoltage() - BATTERY_EMPTY_VOLTAGE)
+			/ (BATTERY_FULL_VOLTAGE - BATTERY_EMPTY_VOLTAGE) * 100;
 
 	if (percentage > 100) {
 		return 100;
@@ -50,7 +50,7 @@ uint8_t ADS1015::getVoltagePercents() {
 }
 
 double ADS1015::getCurrent() {
-	return FACTOR_CURRENT_SENSOR * getAverageValue(PORT_CURRENT);
+	return (getAverageValue(PORT_CURRENT) * VOLTAGE_PER_BIT - (VCC_INPUT / 2)) / FACTOR_CURRENT_SENSOR;
 }
 
 uint16_t ADS1015::getAverageValue(uint8_t channel) {
