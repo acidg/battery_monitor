@@ -1,5 +1,5 @@
 /*
- * AveragedAnalogReader.h
+ * consumption_counter.cpp 
  *
  * Copyright (C) 2017  Benedikt Schlagberger
  *
@@ -17,25 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADS1015_H_
-#define ADS1015_H_
-
+#include "consumption_counter.h"
 #include "Arduino.h"
-#include "config.h"
-#include "Adafruit_ADS1015.h"
 
-/**
- * Class for reading values from the ADS1015
- */
-class ADS1015 {
-  public:
-	void begin();
-	double getVoltage();
-    uint8_t getVoltagePercents();
-	double getCurrent();
-  private:
-    Adafruit_ADS1015 ads1015;
-    uint16_t getAverageValue(uint8_t channel);
-};
+#define MILLISECONDS_PER_HOUR 60 * 60 * 1000
 
-#endif /* ADS1015_H_ */
+ConsumptionCounter::ConsumptionCounter() {
+	reset();
+}
+
+void ConsumptionCounter::update(float current_voltage, int16_t current_milliamps) {
+	uint32_t now = millis();
+	float seconds_since_last = now - last_update / 1000;
+	mas_consumed += current_milliamps * seconds_since_last;
+	last_update = now;
+}
+
+uint32_t ConsumptionCounter::get_consumed_mah() {
+	return mas_consumed / MILLISECONDS_PER_HOUR;
+}
+uint32_t ConsumptionCounter::get_consumed_mwh() {
+	return mws_consumed / MILLISECONDS_PER_HOUR;
+}
+
+void ConsumptionCounter::reset() {
+	mas_consumed = 0;
+	mws_consumed = 0;
+	last_update = millis();
+}
+

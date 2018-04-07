@@ -1,5 +1,5 @@
 /*
- * config.h
+ * current_sensor.h 
  *
  * Copyright (C) 2017  Benedikt Schlagberger
  *
@@ -17,18 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIG_H_
-#define CONFIG_H_
+#ifndef SENSOR_CURRENT_SENSOR_H_
+#define SENSOR_CURRENT_SENSOR_H_
 
-#define OLED_RESET_PIN 4
-#define VCC_INPUT 5.205
-// Resistances of the voltage divider in Ohms
-#define VOLTAGE_DIVIDER_R1 100000 // Resistor near VBAT
-#define VOLTAGE_DIVIDER_R2 50000  // Resistor near GND
+class CurrentSensor {
+public:
+	CurrentSensor();
+	virtual ~CurrentSensor();
+};
 
-/* Battery specifics */
-#define BATTERY_FULL_VOLTAGE 14.6
-#define BATTERY_EMPTY_VOLTAGE 12.0
-#define SENSOR_AVG_COUNT 10
-
-#endif /* CONFIG_H_ */
+#endif /* SENSOR_CURRENT_SENSOR_H_ */
