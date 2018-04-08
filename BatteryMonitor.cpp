@@ -21,6 +21,7 @@
 
 #include "BatteryMonitor.h"
 #include "sensor/voltage_sensor.h"
+#include "sensor/consumption_counter.h"
 #include "view/perspective_base.h"
 #include "view/overview_perspective.h"
 #include "view/value_container.h"
@@ -31,6 +32,7 @@ Adafruit_SSD1306 display(-1);
 VoltageSensor* voltage_sensor;
 OverviewPerspective* overview;
 ValueContainer container;
+ConsumptionCounter ma_counter;
 long last_ms = 0;
 
 //The setup function is called once at startup of the sketch
@@ -47,6 +49,12 @@ void setup() {
     Serial.println("Startup done");
     pinMode(LED, OUTPUT);
     digitalWrite(LED, HIGH);
+    Serial.print("Voltage factor: ");
+    Serial.print(SettingsManager::getInstance()->get_total_voltage_factor());
+    Serial.print(" Charge End: ");
+    Serial.print(SettingsManager::getInstance()->get_charge_end_voltage());
+    Serial.print(" Discharge End: ");
+    Serial.println(SettingsManager::getInstance()->get_discharge_end_voltage());
 }
 
 // The loop function is called in an endless loop
@@ -65,5 +73,8 @@ void updateContainer() {
 	container.cell3_voltage = voltage_sensor->getCellVoltage(CELL3);
 
 	container.total_voltage = voltage_sensor->getTotalVoltage();
-	container.current_ma = 123;
+	container.consuming_ma = voltage_sensor->getConsumptionsMilliamps();
+	ma_counter.update(container.total_voltage, container.consuming_ma);
+	container.mah_consumed = ma_counter.get_consumed_mah();
+	container.mwh_consumed = ma_counter.get_consumed_mwh();
 }

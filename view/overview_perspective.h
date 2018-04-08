@@ -43,7 +43,7 @@ public:
 private:
 	OverviewPerspective(OverviewPerspective&);
 	void renderPercentage(uint8_t percentage);
-	void renderDetails(float voltage, int16_t current_ma);
+	void renderDetails(ValueContainer* values);
 	void renderBar(int16_t current_ma);
 };
 

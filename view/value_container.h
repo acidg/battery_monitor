@@ -29,8 +29,8 @@ struct ValueContainer {
 	float cell2_voltage;
 	float cell3_voltage;
 	int32_t mah_consumed;
-	int32_t wh_consumed;
-	int16_t current_ma;
+	int32_t mwh_consumed;
+	int16_t consuming_ma;
 };
 
 #endif /* SENSOR_VALUE_CONTAINER_H_ */

@@ -69,10 +69,10 @@ private:
 	struct SettingsContainer {
 		uint8_t sample_rate = 4;
 		uint8_t sample_count = 10;
-		float charge_end_voltage = 14.4;
+		float charge_end_voltage = 13.3;
 		float discharge_end_voltage = 12.0;
 		uint32_t total_capacity_mah = 120000;
-		float total_voltage_factor = 0.3;
+		float total_voltage_factor = 3.3;
 	} container;
 };
 

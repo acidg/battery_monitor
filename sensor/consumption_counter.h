@@ -25,7 +25,7 @@
 class ConsumptionCounter {
 public:
 	ConsumptionCounter();
-	virtual ~ConsumptionCounter();
+	~ConsumptionCounter() {};
 	/** Updates the counted milli amps. */
 	void update(float current_voltage, int16_t current_milliamps);
 	/** Returns the amount of consumed milli ampere hours (mAh). */
@@ -36,9 +36,9 @@ public:
 	void reset();
 private:
 	/** Amount of consumed milli amp seconds. */
-	int64_t mas_consumed;
+	int32_t mas_consumed;
 	/** Amount of consumed milli watt seconds. */
-	int64_t mws_consumed;
+	int32_t mws_consumed;
 	/** Milliseconds since start the last update happened. */
 	uint32_t last_update;
 };

@@ -24,8 +24,8 @@
 #include <Adafruit_ADS1015.h>
 
 #include "../settings_manager.h"
-
 #define VOLTAGE_PER_BIT 0.003
+#define MILLIAMPS_PER_BIT VOLTAGE_PER_BIT * 1000 / 0.066// Voltage/bit * Milliamps/Voltage
 
 enum Cell : uint8_t {
 	CELL0 = 0,
@@ -39,6 +39,7 @@ public:
 	VoltageSensor();
 	float getTotalVoltage();
 	float getCellVoltage(Cell cell);
+	int16_t getConsumptionsMilliamps();
 	virtual ~VoltageSensor() {};
 private:
 	Adafruit_ADS1015 ads1015;

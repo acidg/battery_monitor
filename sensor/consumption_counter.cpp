@@ -20,7 +20,8 @@
 #include "consumption_counter.h"
 #include "Arduino.h"
 
-#define MILLISECONDS_PER_HOUR 60 * 60 * 1000
+#define SECONDS_PER_HOUR 3600.0
+#define MILLISECONDS_PER_HOUR SECONDS_PER_HOUR * 1000
 
 ConsumptionCounter::ConsumptionCounter() {
 	reset();
@@ -28,16 +29,17 @@ ConsumptionCounter::ConsumptionCounter() {
 
 void ConsumptionCounter::update(float current_voltage, int16_t current_milliamps) {
 	uint32_t now = millis();
-	float seconds_since_last = now - last_update / 1000;
+	float seconds_since_last = (now - last_update) / 1000.0;
 	mas_consumed += current_milliamps * seconds_since_last;
+	mws_consumed += current_milliamps * current_voltage * seconds_since_last;
 	last_update = now;
 }
 
 uint32_t ConsumptionCounter::get_consumed_mah() {
-	return mas_consumed / MILLISECONDS_PER_HOUR;
+	return mas_consumed / SECONDS_PER_HOUR;
 }
 uint32_t ConsumptionCounter::get_consumed_mwh() {
-	return mws_consumed / MILLISECONDS_PER_HOUR;
+	return mws_consumed / 3600.0;
 }
 
 void ConsumptionCounter::reset() {

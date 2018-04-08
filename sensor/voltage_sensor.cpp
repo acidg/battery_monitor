@@ -23,20 +23,22 @@ VoltageSensor::VoltageSensor() {
 	settings_manager = SettingsManager::getInstance();
 
 	ads1015.begin();
-	ads1015.startComparator_SingleEnded(CELL0, 1000);
-	ads1015.startComparator_SingleEnded(CELL1, 1000);
-	ads1015.startComparator_SingleEnded(CELL2, 1000);
-	ads1015.startComparator_SingleEnded(CELL3, 1000);
+	ads1015.setGain(GAIN_TWOTHIRDS);
 }
 
 float VoltageSensor::getTotalVoltage() {
 	float factor = settings_manager->get_total_voltage_factor();
-	return getAverageValue(CELL0) * VOLTAGE_PER_BIT * factor;
+	uint16_t value = getAverageValue(CELL1);
+	return value * VOLTAGE_PER_BIT * factor;
 }
 
 float VoltageSensor::getCellVoltage(Cell cell) {
 	// TODO: fix this for the new ADC
-	return getAverageValue(cell) * VOLTAGE_PER_BIT;
+	return getAverageValue(CELL1) * VOLTAGE_PER_BIT;
+}
+
+int16_t VoltageSensor::getConsumptionsMilliamps() {
+	return ads1015.readADC_Differential_2_3() * MILLIAMPS_PER_BIT;
 }
 
 uint16_t VoltageSensor::getAverageValue(uint8_t channel) {
