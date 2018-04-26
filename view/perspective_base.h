@@ -20,17 +20,17 @@
 #ifndef VIEW_PERSPECTIVE_BASE_H_
 #define VIEW_PERSPECTIVE_BASE_H_
 
-#include <Adafruit_SSD1306.h>
+#include <tiny_ssd1306.h>
 #include "value_container.h"
 
 class PerspectiveBase {
 public:
-	PerspectiveBase(Adafruit_SSD1306* display):display(display) {};
+	PerspectiveBase(TinySSD1306* display):display(display) {};
 	virtual ~PerspectiveBase() {}
 	/** Renders the perspective. */
 	virtual void renderPerspective(ValueContainer* value_container) = 0;
 protected:
-	Adafruit_SSD1306* display;
+	TinySSD1306* display;
 };
 
 #endif /* VIEW_PERSPECTIVE_BASE_H_ */

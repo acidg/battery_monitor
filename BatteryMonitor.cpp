@@ -20,15 +20,10 @@
  */
 
 #include "BatteryMonitor.h"
-#include "sensor/voltage_sensor.h"
-#include "sensor/consumption_counter.h"
-#include "view/perspective_base.h"
-#include "view/overview_perspective.h"
-#include "view/value_container.h"
 
 #define LED 13
 
-Adafruit_SSD1306 display(-1);
+TinySSD1306 display(SSD1306_128x64);
 VoltageSensor* voltage_sensor;
 OverviewPerspective* overview;
 ValueContainer container;
@@ -37,10 +32,11 @@ long last_ms = 0;
 
 //The setup function is called once at startup of the sketch
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
+    Wire.begin();
 
-    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-    display.clearDisplay();
+    display.beginI2C();
+    display.clear();
 
     overview = new OverviewPerspective(&display);
 
@@ -67,10 +63,10 @@ void loop() {
 }
 
 void updateContainer() {
-	container.cell0_voltage = voltage_sensor->getCellVoltage(CELL0);
-	container.cell1_voltage = voltage_sensor->getCellVoltage(CELL1);
-	container.cell2_voltage = voltage_sensor->getCellVoltage(CELL2);
-	container.cell3_voltage = voltage_sensor->getCellVoltage(CELL3);
+	container.cell0_voltage = voltage_sensor->getCellVoltage(MCP342x::channel1);
+	container.cell1_voltage = voltage_sensor->getCellVoltage(MCP342x::channel1);
+	container.cell2_voltage = voltage_sensor->getCellVoltage(MCP342x::channel1);
+	container.cell3_voltage = voltage_sensor->getCellVoltage(MCP342x::channel1);
 
 	container.total_voltage = voltage_sensor->getTotalVoltage();
 	container.consuming_ma = voltage_sensor->getConsumptionsMilliamps();

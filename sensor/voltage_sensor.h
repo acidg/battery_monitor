@@ -21,11 +21,14 @@
 #define SENSOR_VOLTAGE_SENSOR_H_
 
 #include <Arduino.h>
-#include <Adafruit_ADS1015.h>
+#include <MCP342x.h>
 
 #include "../settings_manager.h"
-#define VOLTAGE_PER_BIT 0.003
-#define MILLIAMPS_PER_BIT VOLTAGE_PER_BIT * 1000 / 0.066// Voltage/bit * Milliamps/Voltage
+#define MCP_VOLTAGE_PER_BIT 0.001 // total pp voltage / 2^resolution = 4.096 / 2^12
+#define MILLIAMPS_PER_BIT 4.98/1024 * 1000 / 0.066 // Voltage/bit * Milliamps/Voltage
+#define MCP_RESOLUTION 12
+#define MCP_ONE_SHOT_MODE 0
+#define MCP_ADDRESS 0x68
 
 enum Cell : uint8_t {
 	CELL0 = 0,
@@ -38,13 +41,14 @@ class VoltageSensor {
 public:
 	VoltageSensor();
 	float getTotalVoltage();
-	float getCellVoltage(Cell cell);
+	float getCellVoltage(MCP342x::Channel channel);
 	int16_t getConsumptionsMilliamps();
 	virtual ~VoltageSensor() {};
 private:
-	Adafruit_ADS1015 ads1015;
 	SettingsManager* settings_manager;
-	uint16_t getAverageValue(uint8_t channel);
+	MCP342x* mcp;
+	int16_t getAverageValue(MCP342x::Channel channel);
+	int16_t readValue(MCP342x::Channel channel);
 };
 
 #endif /* SENSOR_VOLTAGE_SENSOR_H_ */

@@ -21,6 +21,13 @@
 #ifndef _BatteryMonitor_H_
 #define _BatteryMonitor_H_
 #include "Arduino.h"
+#include <tiny_ssd1306.h>
+
+#include "sensor/voltage_sensor.h"
+#include "sensor/consumption_counter.h"
+#include "view/perspective_base.h"
+#include "view/overview_perspective.h"
+#include "view/value_container.h"
 
 void updateContainer();
 

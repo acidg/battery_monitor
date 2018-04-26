@@ -42,24 +42,14 @@
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/arduino/hardware/avr/1.6.20/variants/eightanaloginputs</locationURI>
 		</link>
 		<link>
-			<name>libraries/Adafruit_ADS1X15</name>
-			<type>2</type>
-			<location>/home/bene/Arduino/libraries/Adafruit_ADS1X15</location>
-		</link>
-		<link>
-			<name>libraries/Adafruit_GFX_Library</name>
-			<type>2</type>
-			<location>/home/bene/Arduino/libraries/Adafruit_GFX_Library</location>
-		</link>
-		<link>
-			<name>libraries/Adafruit_SSD1306</name>
-			<type>2</type>
-			<location>/home/bene/Arduino/libraries/Adafruit_SSD1306</location>
-		</link>
-		<link>
 			<name>libraries/EEPROM</name>
 			<type>2</type>
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/arduino/hardware/avr/1.6.20/libraries/EEPROM</locationURI>
+		</link>
+		<link>
+			<name>libraries/MCP342x</name>
+			<type>2</type>
+			<locationURI>ECLIPSE_HOME/arduinoPlugin/libraries/MCP342x/1.0.2</locationURI>
 		</link>
 		<link>
 			<name>libraries/SPI</name>
@@ -70,6 +60,11 @@
 			<name>libraries/Wire</name>
 			<type>2</type>
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/arduino/hardware/avr/1.6.20/libraries/Wire</locationURI>
+		</link>
+		<link>
+			<name>libraries/ssd1306</name>
+			<type>2</type>
+			<location>/home/bene/Arduino/libraries/ssd1306</location>
 		</link>
 	</linkedResources>
 </projectDescription>

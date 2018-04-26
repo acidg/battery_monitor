@@ -18,36 +18,69 @@
  */
 
 #include "voltage_sensor.h"
+#include "Wire.h"
 
 VoltageSensor::VoltageSensor() {
 	settings_manager = SettingsManager::getInstance();
 
-	ads1015.begin();
-	ads1015.setGain(GAIN_TWOTHIRDS);
+	mcp = new MCP342x(MCP_ADDRESS);
+
+	MCP342x::generalCallReset();
+	delay(1); // MC342x needs 300us to settle, wait 1ms
+
+	// Check device present
+	Wire.requestFrom(MCP_ADDRESS, 1);
+	if (!Wire.available()) {
+		Serial.print("No device found at address ");
+		Serial.println(MCP_ADDRESS, HEX);
+		while (1)
+			;
+	}
 }
 
 float VoltageSensor::getTotalVoltage() {
 	float factor = settings_manager->get_total_voltage_factor();
-	uint16_t value = getAverageValue(CELL1);
-	return value * VOLTAGE_PER_BIT * factor;
+	int16_t value = getAverageValue(MCP342x::channel1);
+	Serial.print("Voltage: ");
+	Serial.println(value);
+	return value * MCP_VOLTAGE_PER_BIT * factor;
 }
 
-float VoltageSensor::getCellVoltage(Cell cell) {
+float VoltageSensor::getCellVoltage(MCP342x::Channel channel) {
 	// TODO: fix this for the new ADC
-	return getAverageValue(CELL1) * VOLTAGE_PER_BIT;
+	return getAverageValue(channel) * MCP_VOLTAGE_PER_BIT;
 }
 
 int16_t VoltageSensor::getConsumptionsMilliamps() {
-	return ads1015.readADC_Differential_2_3() * MILLIAMPS_PER_BIT;
+	long value = 0;
+	for (uint8_t i = 0; i < 10; i++) {
+		value += analogRead(A6);
+	}
+	return (512 - value / 10) * MILLIAMPS_PER_BIT;
 }
 
-uint16_t VoltageSensor::getAverageValue(uint8_t channel) {
-	uint32_t sum = 0;
+int16_t VoltageSensor::getAverageValue(MCP342x::Channel channel) {
+	int32_t sum = 0;
 	uint8_t sample_count = settings_manager->get_sample_count();
 
 	for (uint8_t i = 0; i < sample_count; i++) {
-		sum += ads1015.readADC_SingleEnded(channel);
+		sum += readValue(channel);
 	}
 
 	return sum / sample_count;
+}
+
+int16_t VoltageSensor::readValue(MCP342x::Channel channel) {
+	MCP342x::Config status;
+	long result = 0;
+
+	uint8_t err = mcp->convertAndRead(channel, MCP342x::oneShot,
+			MCP342x::resolution12, MCP342x::gain1, 100000000, result, status);
+
+	if (err) {
+		Serial.print("Convert error: ");
+		Serial.println(err);
+	}
+
+	return result;
 }

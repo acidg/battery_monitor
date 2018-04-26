@@ -68,11 +68,11 @@ private:
 	/** Struct containing all settings which are stored in the EEPROM. */
 	struct SettingsContainer {
 		uint8_t sample_rate = 4;
-		uint8_t sample_count = 10;
+		uint8_t sample_count = 3;
 		float charge_end_voltage = 13.3;
 		float discharge_end_voltage = 12.0;
 		uint32_t total_capacity_mah = 120000;
-		float total_voltage_factor = 3.3;
+		float total_voltage_factor = 7.5;
 	} container;
 };
 
