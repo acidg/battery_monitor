@@ -24,26 +24,20 @@
 #include <MCP342x.h>
 
 #include "../settings_manager.h"
-#define MCP_VOLTAGE_PER_BIT 0.001 // total pp voltage / 2^resolution = 4.096 / 2^12
-#define MILLIAMPS_PER_BIT 4.98/1024 * 1000 / 0.066 // Voltage/bit * Milliamps/Voltage
+#define MCP_VOLTAGE_PER_BIT 0.001 // total peak to peak voltage of sensor / 2^resolution = 4.096 / 2^12
+#define RESISTOR1 51
+#define RESISTOR2 43
+#define MCP_VOLTAGE_DIVIDER_FACTOR (RESISTOR1 + RESISTOR2) / RESISTOR1
+#define MCP_VOLTAGE_FACTOR MCP_VOLTAGE_PER_BIT * MCP_VOLTAGE_DIVIDER_FACTOR
 #define MCP_RESOLUTION 12
 #define MCP_ONE_SHOT_MODE 0
 #define MCP_ADDRESS 0x68
 
-enum Cell : uint8_t {
-	CELL0 = 0,
-	CELL1 = 1,
-	CELL2 = 2,
-	CELL3 = 3
-};
-
 class VoltageSensor {
 public:
 	VoltageSensor();
-	float getTotalVoltage();
-	float getCellVoltage(MCP342x::Channel channel);
-	int16_t getConsumptionsMilliamps();
 	virtual ~VoltageSensor() {};
+	float getCellVoltage(MCP342x::Channel channel);
 private:
 	SettingsManager* settings_manager;
 	MCP342x* mcp;

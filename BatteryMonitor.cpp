@@ -25,6 +25,7 @@
 
 TinySSD1306 display(SSD1306_128x64);
 VoltageSensor* voltage_sensor;
+CurrentSensor* current_sensor;
 OverviewPerspective* overview;
 ValueContainer container;
 ConsumptionCounter ma_counter;
@@ -41,6 +42,7 @@ void setup() {
     overview = new OverviewPerspective(&display);
 
     voltage_sensor = new VoltageSensor();
+    current_sensor = new CurrentSensor();
 
     Serial.println("Startup done");
     pinMode(LED, OUTPUT);
@@ -64,13 +66,35 @@ void loop() {
 
 void updateContainer() {
 	container.cell0_voltage = voltage_sensor->getCellVoltage(MCP342x::channel1);
-	container.cell1_voltage = voltage_sensor->getCellVoltage(MCP342x::channel1);
-	container.cell2_voltage = voltage_sensor->getCellVoltage(MCP342x::channel1);
-	container.cell3_voltage = voltage_sensor->getCellVoltage(MCP342x::channel1);
+	container.cell1_voltage = voltage_sensor->getCellVoltage(MCP342x::channel2);
+	container.cell2_voltage = voltage_sensor->getCellVoltage(MCP342x::channel3);
+	container.cell3_voltage = voltage_sensor->getCellVoltage(MCP342x::channel4);
 
-	container.total_voltage = voltage_sensor->getTotalVoltage();
-	container.consuming_ma = voltage_sensor->getConsumptionsMilliamps();
+	container.total_voltage = container.cell0_voltage + container.cell1_voltage + container.cell2_voltage + container.cell3_voltage;
+	container.percentage = calculatePercentage(container.total_voltage);
+	container.consuming_ma = 0;
 	ma_counter.update(container.total_voltage, container.consuming_ma);
 	container.mah_consumed = ma_counter.get_consumed_mah();
 	container.mwh_consumed = ma_counter.get_consumed_mwh();
+}
+
+uint8_t calculatePercentage(float total_voltage) {
+	float cell_voltage = total_voltage / 4;
+	if (total_voltage > 3.32) {
+		return 100;
+	}
+
+	if (total_voltage > 3.25) {
+		return (total_voltage - 3.25) * (50.0 / (3.32 - 3.25));
+	}
+
+	if (total_voltage > 3.22) {
+		return (total_voltage - 3.22) * (27.0 / (3.25 - 3.22));
+	}
+
+	if (total_voltage > 3.14) {
+		return (total_voltage - 3.14) * (23.0 / (3.22 - 3.14));
+	}
+
+	return 0;
 }

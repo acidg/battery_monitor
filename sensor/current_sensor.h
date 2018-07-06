@@ -20,10 +20,13 @@
 #ifndef SENSOR_CURRENT_SENSOR_H_
 #define SENSOR_CURRENT_SENSOR_H_
 
+#include <stdint.h>
+
 class CurrentSensor {
 public:
 	CurrentSensor();
 	virtual ~CurrentSensor();
+	uint16_t getCurrentMilliamps();
 };
 
 #endif /* SENSOR_CURRENT_SENSOR_H_ */

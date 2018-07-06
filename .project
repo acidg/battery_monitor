@@ -49,7 +49,7 @@
 		<link>
 			<name>libraries/MCP342x</name>
 			<type>2</type>
-			<locationURI>ECLIPSE_HOME/arduinoPlugin/libraries/MCP342x/1.0.2</locationURI>
+			<location>/home/bene/Arduino/libraries/MCP342x</location>
 		</link>
 		<link>
 			<name>libraries/SPI</name>

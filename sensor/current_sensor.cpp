@@ -28,3 +28,6 @@ CurrentSensor::~CurrentSensor() {
 	// TODO Auto-generated destructor stub
 }
 
+uint16_t CurrentSensor::getCurrentMilliamps() {
+	return 0;
+}

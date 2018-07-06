@@ -24,11 +24,13 @@
 #include <tiny_ssd1306.h>
 
 #include "sensor/voltage_sensor.h"
+#include "sensor/current_sensor.h"
 #include "sensor/consumption_counter.h"
 #include "view/perspective_base.h"
 #include "view/overview_perspective.h"
 #include "view/value_container.h"
 
 void updateContainer();
+uint8_t calculatePercentage(float total_voltage);
 
 #endif /* _BatteryMonitor_H_ */

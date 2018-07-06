@@ -24,46 +24,41 @@ OverviewPerspective::OverviewPerspective(TinySSD1306* display) :
 }
 
 void OverviewPerspective::renderPerspective(ValueContainer* value_container) {
-	float battery_empty_voltage =
-			SettingsManager::getInstance()->get_discharge_end_voltage();
-	float battery_full_voltage =
-			SettingsManager::getInstance()->get_charge_end_voltage();
-	float difference = value_container->total_voltage - battery_empty_voltage;
-
-	if (difference < 0) {
-		difference = 0;
-	}
-
-	uint8_t percentage = difference
-			/ (battery_full_voltage - battery_empty_voltage) * 100;
-
-	if (percentage > 100) {
-		percentage = 100;
-	}
-
-	renderPercentage(percentage);
+	renderPercentage(value_container->percentage);
 	renderBar(value_container->consuming_ma);
 	renderDetails(value_container);
 }
 
 void OverviewPerspective::renderPercentage(uint8_t percentage) {
-	char string[9];
-	dtostrf(percentage, 8, 0, string);
-	display->charF12x16(0, 0, "% ");
-	display->charF12x16(24, 0, string);
+	char string[5];
+	dtostrf(percentage, 3, 0, string);
+	display->charF12x16(0, 0, string);
+	display->charF12x16(36, 0, "%");
 }
 
 void OverviewPerspective::renderDetails(ValueContainer* values) {
 	char string[9];
-	dtostrf(values->total_voltage, 8, 3, string);
-	display->charF12x16(0, 2, "V ");
-	display->charF12x16(24, 2, string);
+	dtostrf(values->total_voltage, 4, 1, string);
+	display->charF12x16(48, 0, string);
+	display->charF12x16(112, 0, "V");
 	dtostrf(values->consuming_ma / 1000.0, 8, 2, string);
-	display->charF12x16(0, 4, "A ");
-	display->charF12x16(24, 4, string);
+	display->charF12x16(0, 2, "A ");
+	display->charF12x16(24, 2, string);
 	dtostrf(values->mah_consumed / 1000.0, 8, 2, string);
-	display->charF12x16(0, 6, "Ah");
-	display->charF12x16(24, 6, string);
+	display->charF12x16(0, 4, "Ah");
+	display->charF12x16(24, 4, string);
+
+	dtostrf(values->cell0_voltage, 3, 2, string);
+	display->charF6x8(0, 7, string);
+
+	dtostrf(values->cell1_voltage, 3, 2, string);
+	display->charF6x8(32, 7, string);
+
+	dtostrf(values->cell2_voltage, 3, 2, string);
+	display->charF6x8(64, 7, string);
+
+	dtostrf(values->cell3_voltage, 3, 2, string);
+	display->charF6x8(96, 7, string);
 }
 
 void OverviewPerspective::renderBar(int16_t current_ma) {

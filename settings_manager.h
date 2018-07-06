@@ -72,7 +72,7 @@ private:
 		float charge_end_voltage = 13.3;
 		float discharge_end_voltage = 12.0;
 		uint32_t total_capacity_mah = 120000;
-		float total_voltage_factor = 7.5;
+		float total_voltage_factor = 7.3498;
 	} container;
 };
 

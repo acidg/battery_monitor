@@ -30,33 +30,16 @@ VoltageSensor::VoltageSensor() {
 
 	// Check device present
 	Wire.requestFrom(MCP_ADDRESS, 1);
-	if (!Wire.available()) {
+	while (!Wire.available()) {
 		Serial.print("No device found at address ");
 		Serial.println(MCP_ADDRESS, HEX);
-		while (1)
-			;
+		delay(50);
+		Wire.requestFrom(MCP_ADDRESS, 1);
 	}
-}
-
-float VoltageSensor::getTotalVoltage() {
-	float factor = settings_manager->get_total_voltage_factor();
-	int16_t value = getAverageValue(MCP342x::channel1);
-	Serial.print("Voltage: ");
-	Serial.println(value);
-	return value * MCP_VOLTAGE_PER_BIT * factor;
 }
 
 float VoltageSensor::getCellVoltage(MCP342x::Channel channel) {
-	// TODO: fix this for the new ADC
-	return getAverageValue(channel) * MCP_VOLTAGE_PER_BIT;
-}
-
-int16_t VoltageSensor::getConsumptionsMilliamps() {
-	long value = 0;
-	for (uint8_t i = 0; i < 10; i++) {
-		value += analogRead(A6);
-	}
-	return (512 - value / 10) * MILLIAMPS_PER_BIT;
+	return getAverageValue(channel) * MCP_VOLTAGE_FACTOR;
 }
 
 int16_t VoltageSensor::getAverageValue(MCP342x::Channel channel) {

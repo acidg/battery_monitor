@@ -24,6 +24,7 @@
 
 struct ValueContainer {
 	float total_voltage;
+	uint8_t percentage;
 	float cell0_voltage;
 	float cell1_voltage;
 	float cell2_voltage;
