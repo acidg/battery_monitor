@@ -29,8 +29,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/EEPROM/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/ssd1306}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/ssd1306/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/MCP342x}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/MCP342x/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/Adafruit_ADS1X15}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.cpp.sketch.input.1972960575" name="CPP source files" superClass="io.sloeber.compiler.cpp.sketch.input"/>
 							</tool>
@@ -46,8 +45,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/EEPROM/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/ssd1306}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/ssd1306/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/MCP342x}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/MCP342x/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/Adafruit_ADS1X15}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.c.sketch.input.853988599" name="C Source Files" superClass="io.sloeber.compiler.c.sketch.input"/>
 							</tool>
@@ -63,8 +61,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/EEPROM/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/ssd1306}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/ssd1306/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/MCP342x}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/MCP342x/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BatteryMonitor/libraries/Adafruit_ADS1X15}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.S.sketch.input.2105109628" name="Assembly source files" superClass="io.sloeber.compiler.S.sketch.input"/>
 							</tool>

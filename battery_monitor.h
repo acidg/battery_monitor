@@ -31,6 +31,7 @@
 #include "view/value_container.h"
 
 void updateContainer();
+void printContainer();
 uint8_t calculatePercentage(float total_voltage);
 
 #endif /* _BatteryMonitor_H_ */

@@ -20,14 +20,23 @@
 #include "current_sensor.h"
 
 CurrentSensor::CurrentSensor() {
-	// TODO Auto-generated constructor stub
-
+	settings_manager = SettingsManager::getInstance();
+	ads = new Adafruit_ADS1115(ADS_CURRENT_ADDRESS);
+	ads->setGain(GAIN_ONE);
 }
 
-CurrentSensor::~CurrentSensor() {
-	// TODO Auto-generated destructor stub
+int16_t CurrentSensor::getCurrentMilliamps() {
+	return getAverageValue() * CURRENT_FACTOR - MILLIAMP_OFFSET;
 }
 
-uint16_t CurrentSensor::getCurrentMilliamps() {
-	return 0;
+
+int16_t CurrentSensor::getAverageValue() {
+	int32_t sum = 0;
+	uint8_t sample_count = settings_manager->get_sample_count();
+
+	for (uint8_t i = 0; i < sample_count; i++) {
+		sum += ads->readADC_Differential_0_1();
+	}
+
+	return sum / sample_count;
 }

@@ -18,52 +18,24 @@
  */
 
 #include "voltage_sensor.h"
-#include "Wire.h"
 
 VoltageSensor::VoltageSensor() {
 	settings_manager = SettingsManager::getInstance();
-
-	mcp = new MCP342x(MCP_ADDRESS);
-
-	MCP342x::generalCallReset();
-	delay(1); // MC342x needs 300us to settle, wait 1ms
-
-	// Check device present
-	Wire.requestFrom(MCP_ADDRESS, 1);
-	while (!Wire.available()) {
-		Serial.print("No device found at address ");
-		Serial.println(MCP_ADDRESS, HEX);
-		delay(50);
-		Wire.requestFrom(MCP_ADDRESS, 1);
-	}
+	ads = new Adafruit_ADS1015(ADS_VOLTAGE_ADDRESS);
+	ads->setGain(GAIN_TWOTHIRDS);
 }
 
-float VoltageSensor::getCellVoltage(MCP342x::Channel channel) {
-	return getAverageValue(channel) * MCP_VOLTAGE_FACTOR;
+float VoltageSensor::getCellVoltage(uint8_t cell) {
+	return getAverageValue(cell);
 }
 
-int16_t VoltageSensor::getAverageValue(MCP342x::Channel channel) {
+uint16_t VoltageSensor::getAverageValue(uint8_t channel) {
 	int32_t sum = 0;
 	uint8_t sample_count = settings_manager->get_sample_count();
 
 	for (uint8_t i = 0; i < sample_count; i++) {
-		sum += readValue(channel);
+		sum += ads->readADC_SingleEnded(channel);
 	}
 
 	return sum / sample_count;
-}
-
-int16_t VoltageSensor::readValue(MCP342x::Channel channel) {
-	MCP342x::Config status;
-	long result = 0;
-
-	uint8_t err = mcp->convertAndRead(channel, MCP342x::oneShot,
-			MCP342x::resolution12, MCP342x::gain1, 100000000, result, status);
-
-	if (err) {
-		Serial.print("Convert error: ");
-		Serial.println(err);
-	}
-
-	return result;
 }

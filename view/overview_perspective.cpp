@@ -31,14 +31,14 @@ void OverviewPerspective::renderPerspective(ValueContainer* value_container) {
 
 void OverviewPerspective::renderPercentage(uint8_t percentage) {
 	char string[5];
-	dtostrf(percentage, 3, 0, string);
+	dtostrf(percentage, 2, 0, string);
 	display->charF12x16(0, 0, string);
-	display->charF12x16(36, 0, "%");
+	display->charF12x16(28, 0, "%");
 }
 
 void OverviewPerspective::renderDetails(ValueContainer* values) {
 	char string[9];
-	dtostrf(values->total_voltage, 4, 1, string);
+	dtostrf(values->total_voltage, 4, 2, string);
 	display->charF12x16(48, 0, string);
 	display->charF12x16(112, 0, "V");
 	dtostrf(values->consuming_ma / 1000.0, 8, 2, string);
