@@ -21,20 +21,45 @@
 
 VoltageSensor::VoltageSensor() {
 	settings_manager = SettingsManager::getInstance();
-	ads = new Adafruit_ADS1015(ADS_VOLTAGE_ADDRESS);
-	ads->setGain(GAIN_TWOTHIRDS);
 }
 
 float VoltageSensor::getCellVoltage(uint8_t cell) {
-	return getAverageValue(cell);
+	if (cell == 0) {
+		return getAverageValue(0);
+	}
+
+	return getAverageValue(cell) - getAverageValue(cell - 1);
 }
 
-uint16_t VoltageSensor::getAverageValue(uint8_t channel) {
+float VoltageSensor::getTotalVoltage() {
+	return getAverageValue(3);
+}
+
+uint16_t VoltageSensor::getAverageValue(uint8_t cell) {
+	uint8_t analog_pin = 0;
+
+	switch (cell) {
+	case 0:
+		analog_pin = A0;
+		break;
+	case 1:
+		analog_pin = A1;
+		break;
+	case 2:
+		analog_pin = A2;
+		break;
+	case 3:
+		analog_pin = A3;
+		break;
+	default:
+		return 0;
+	}
+
 	int32_t sum = 0;
 	uint8_t sample_count = settings_manager->get_sample_count();
 
 	for (uint8_t i = 0; i < sample_count; i++) {
-		sum += ads->readADC_SingleEnded(channel);
+		sum += analogRead(analog_pin);
 	}
 
 	return sum / sample_count;

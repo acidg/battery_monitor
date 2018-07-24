@@ -21,7 +21,7 @@
 
 CurrentSensor::CurrentSensor() {
 	settings_manager = SettingsManager::getInstance();
-	ads = new Adafruit_ADS1115(ADS_CURRENT_ADDRESS);
+	ads = new Adafruit_ADS1115(ADS_ADDRESS);
 	ads->setGain(GAIN_ONE);
 }
 

@@ -25,11 +25,11 @@
 
 #include "../settings_manager.h"
 
-#define ADS_CURRENT_ADDRESS 0x48
-#define ADS_CURRENT_MILLIVOLTAGE_PER_BIT 0.125F // 16 bit for +/- 4.096V -> 1 bit = 0.125mV
+#define ADS_ADDRESS 0x48
+#define ADS_MILLIVOLTS_PER_BIT 3.0F // 12 bit for +/- 4.096V -> 1 bit = 3mV
 #define ACS712_VOLTAGE_PER_AMP 0.066F
-#define CURRENT_FACTOR (1.0F / ACS712_VOLTAGE_PER_AMP) * ADS_CURRENT_MILLIVOLTAGE_PER_BIT
-#define MILLIAMP_OFFSET 17
+#define CURRENT_FACTOR (1.0F / ACS712_VOLTAGE_PER_AMP) * ADS_MILLIVOLTS_PER_BIT
+#define MILLIAMP_OFFSET 0
 
 class CurrentSensor {
 public:

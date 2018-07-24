@@ -33,20 +33,51 @@ long last_ms = 0;
 
 //The setup function is called once at startup of the sketch
 void setup() {
+    pinMode(LED, OUTPUT);
+    pinMode(A0, INPUT);
+    pinMode(A1, INPUT);
+    pinMode(A2, INPUT);
+    pinMode(A3, INPUT);
+
+    digitalWrite(LED, HIGH);
+    delay(2000);
+    digitalWrite(LED, LOW);
+    delay(200);
+
     Serial.begin(115200);
     Wire.begin();
+
+    digitalWrite(LED, HIGH);
+    delay(200);
+    digitalWrite(LED, LOW);
+    delay(200);
 
     display.beginI2C();
     display.clear();
 
+    digitalWrite(LED, HIGH);
+    delay(200);
+    digitalWrite(LED, LOW);
+    delay(200);
+
     overview = new OverviewPerspective(&display);
+
+    digitalWrite(LED, HIGH);
+    delay(200);
+    digitalWrite(LED, LOW);
+    delay(200);
 
     voltage_sensor = new VoltageSensor();
     current_sensor = new CurrentSensor();
 
-    Serial.println("Startup done");
-    pinMode(LED, OUTPUT);
     digitalWrite(LED, HIGH);
+    delay(200);
+    digitalWrite(LED, LOW);
+    delay(200);
+
+    Serial.println("Startup done");
+    digitalWrite(LED, HIGH);
+
     Serial.print("Voltage factor: ");
     Serial.print(SettingsManager::getInstance()->get_total_voltage_factor());
     Serial.print(" Charge End: ");
@@ -73,11 +104,7 @@ void updateContainer() {
 	container.cell2_voltage = voltage_sensor->getCellVoltage(2);
 	container.cell3_voltage = voltage_sensor->getCellVoltage(3);
 
-	container.total_voltage = container.cell3_voltage;
-
-//	container.cell3_voltage -= container.cell2_voltage;
-//	container.cell2_voltage -= container.cell1_voltage;
-//	container.cell1_voltage -= container.cell0_voltage;
+	container.total_voltage = voltage_sensor->getTotalVoltage();
 
 	container.percentage = calculatePercentage(container.total_voltage);
 	container.consuming_ma = current_sensor->getCurrentMilliamps();

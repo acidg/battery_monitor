@@ -21,23 +21,21 @@
 #define SENSOR_VOLTAGE_SENSOR_H_
 
 #include <Arduino.h>
-#include <Adafruit_ADS1015.h>
 
 #include "../settings_manager.h"
 
-#define ADS_VOLTAGE_ADDRESS 0x49
-#define ADS_VOLTAGE_PER_BIT 0.003F // 12 bit for +/- 6.144V -> 1 bit = 3mV
-#define ADS_VOLTAGE_DIVIDER_FACTOR 3.0F
-#define ADS_VOLTAGE_FACTOR ADS_MV_PER_BIT * ADS_VOLTAGE_DIVIDER_FACTOR
+#define VOLTAGE_PER_BIT 0.004882813F // 10 bit for 5.0 -> 1 bit = 4.882813
+#define VOLTAGE_DIVIDER_FACTOR 3.0F
+#define VOLTAGE_FACTOR MV_PER_BIT * VOLTAGE_DIVIDER_FACTOR
 
 class VoltageSensor {
 public:
 	VoltageSensor();
 	virtual ~VoltageSensor() {};
 	float getCellVoltage(uint8_t cell);
+	float VoltageSensor::getTotalVoltage();
 private:
 	SettingsManager* settings_manager;
-	Adafruit_ADS1015* ads;
 	uint16_t getAverageValue(uint8_t cell);
 };
 
