@@ -24,43 +24,50 @@ VoltageSensor::VoltageSensor() {
 }
 
 float VoltageSensor::getCellVoltage(uint8_t cell) {
-	if (cell == 0) {
-		return getAverageValue(0);
+	uint8_t pin = 0;
+	float cell_voltage = 0;
+
+	switch (cell) {
+	case 0:
+		pin = A0;
+		break;
+	case 1:
+		pin = A1;
+		break;
+	case 2:
+		pin = A2;
+		break;
+	case 3:
+		pin = A3;
+		break;
+	default:
+		return 0;
 	}
 
-	return getAverageValue(cell) - getAverageValue(cell - 1);
+	if (cell == 0) {
+		cell_voltage = getAverageValue(0);
+	} else {
+		cell_voltage = getAverageValue(cell) - getAverageValue(cell - 1);
+	}
+
+	if (cell_voltage < 0) {
+		return 0.001;
+	}
+
+	return cell_voltage;
 }
 
 float VoltageSensor::getTotalVoltage() {
 	return getAverageValue(3);
 }
 
-uint16_t VoltageSensor::getAverageValue(uint8_t cell) {
-	uint8_t analog_pin = 0;
-
-	switch (cell) {
-	case 0:
-		analog_pin = A0;
-		break;
-	case 1:
-		analog_pin = A1;
-		break;
-	case 2:
-		analog_pin = A2;
-		break;
-	case 3:
-		analog_pin = A3;
-		break;
-	default:
-		return 0;
-	}
-
-	int32_t sum = 0;
+float VoltageSensor::getAverageValue(uint8_t pin) {
+	uint32_t sum = 0;
 	uint8_t sample_count = settings_manager->get_sample_count();
 
 	for (uint8_t i = 0; i < sample_count; i++) {
-		sum += analogRead(analog_pin);
+		sum += analogRead(pin);
 	}
 
-	return sum / sample_count;
+	return abs(sum * VOLTAGE_FACTOR / sample_count);
 }

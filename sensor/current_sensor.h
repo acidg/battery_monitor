@@ -21,15 +21,13 @@
 #define SENSOR_CURRENT_SENSOR_H_
 
 #include <Arduino.h>
-#include <Adafruit_ADS1015.h>
 
 #include "../settings_manager.h"
 
-#define ADS_ADDRESS 0x48
-#define ADS_MILLIVOLTS_PER_BIT 3.0F // 12 bit for +/- 4.096V -> 1 bit = 3mV
-#define ACS712_VOLTAGE_PER_AMP 0.066F
-#define CURRENT_FACTOR (1.0F / ACS712_VOLTAGE_PER_AMP) * ADS_MILLIVOLTS_PER_BIT
-#define MILLIAMP_OFFSET 0
+#define ACS712_MILLIAMPS_PER_VOLT 1000 / 0.066F
+#define ARDUINO_VOLTS_PER_BIT 5.0F / 1024.0F
+#define MILLIAMPS_PER_BIT ACS712_MILLIAMPS_PER_VOLT * ARDUINO_VOLTS_PER_BIT
+#define CURRENT_OFFSET 50
 
 class CurrentSensor {
 public:
@@ -38,8 +36,6 @@ public:
 	int16_t getCurrentMilliamps();
 private:
 	SettingsManager* settings_manager;
-	Adafruit_ADS1115* ads;
-	int16_t getAverageValue();
 };
 
 #endif /* SENSOR_CURRENT_SENSOR_H_ */

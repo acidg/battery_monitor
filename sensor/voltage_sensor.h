@@ -26,7 +26,7 @@
 
 #define VOLTAGE_PER_BIT 0.004882813F // 10 bit for 5.0 -> 1 bit = 4.882813
 #define VOLTAGE_DIVIDER_FACTOR 3.0F
-#define VOLTAGE_FACTOR MV_PER_BIT * VOLTAGE_DIVIDER_FACTOR
+#define VOLTAGE_FACTOR VOLTAGE_PER_BIT * VOLTAGE_DIVIDER_FACTOR
 
 class VoltageSensor {
 public:
@@ -36,7 +36,7 @@ public:
 	float VoltageSensor::getTotalVoltage();
 private:
 	SettingsManager* settings_manager;
-	uint16_t getAverageValue(uint8_t cell);
+	float getAverageValue(uint8_t cell);
 };
 
 #endif /* SENSOR_VOLTAGE_SENSOR_H_ */

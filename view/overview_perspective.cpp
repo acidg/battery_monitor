@@ -59,6 +59,11 @@ void OverviewPerspective::renderDetails(ValueContainer* values) {
 
 	dtostrf(values->cell3_voltage, 3, 2, string);
 	display->charF6x8(96, 7, string);
+
+	// fixing spaces between values
+	display->clearBlock(24, 7, 8, 8);
+	display->clearBlock(56, 7, 8, 8);
+	display->clearBlock(88, 7, 8, 8);
 }
 
 void OverviewPerspective::renderBar(int16_t current_ma) {

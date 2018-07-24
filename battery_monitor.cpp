@@ -39,41 +39,16 @@ void setup() {
     pinMode(A2, INPUT);
     pinMode(A3, INPUT);
 
-    digitalWrite(LED, HIGH);
-    delay(2000);
-    digitalWrite(LED, LOW);
-    delay(200);
-
     Serial.begin(115200);
     Wire.begin();
-
-    digitalWrite(LED, HIGH);
-    delay(200);
-    digitalWrite(LED, LOW);
-    delay(200);
 
     display.beginI2C();
     display.clear();
 
-    digitalWrite(LED, HIGH);
-    delay(200);
-    digitalWrite(LED, LOW);
-    delay(200);
-
     overview = new OverviewPerspective(&display);
-
-    digitalWrite(LED, HIGH);
-    delay(200);
-    digitalWrite(LED, LOW);
-    delay(200);
 
     voltage_sensor = new VoltageSensor();
     current_sensor = new CurrentSensor();
-
-    digitalWrite(LED, HIGH);
-    delay(200);
-    digitalWrite(LED, LOW);
-    delay(200);
 
     Serial.println("Startup done");
     digitalWrite(LED, HIGH);
@@ -92,9 +67,8 @@ void loop() {
 	printContainer();
 	overview->renderPerspective(&container);
 	long now = millis();
-	Serial.print("Looptime: ");
 	Serial.print(now - last_ms);
-	Serial.println("ms\n\n");
+	Serial.println("ms");
 	last_ms = now;
 }
 
@@ -114,29 +88,24 @@ void updateContainer() {
 }
 
 void printContainer() {
-	Serial.print("Cell Voltages: 0 = ");
 	Serial.print(container.cell0_voltage);
-	Serial.print("V 1 = ");
+	Serial.print("V\t");
 	Serial.print(container.cell1_voltage);
-	Serial.print("V 2 = ");
+	Serial.print("V\t");
 	Serial.print(container.cell2_voltage);
-	Serial.print("V 3 = ");
+	Serial.print("V\t");
 	Serial.print(container.cell3_voltage);
-	Serial.println("V");
-
-	Serial.print("Total voltage: ");
+	Serial.print("V\t");
 	Serial.print(container.total_voltage);
-	Serial.print("V ~= ");
+	Serial.print("V\t");
 	Serial.print(container.percentage);
-	Serial.println("%");
-
-	Serial.print("Current: ");
+	Serial.print("%\t");
 	Serial.print(container.consuming_ma);
-	Serial.print("mA, ");
+	Serial.print("mA\t");
 	Serial.print(container.mah_consumed);
-	Serial.print("mAh, ");
+	Serial.print("mAh\t");
 	Serial.print(container.mwh_consumed);
-	Serial.println("mWh");
+	Serial.print("mWh\t");
 }
 
 uint8_t calculatePercentage(float total_voltage) {

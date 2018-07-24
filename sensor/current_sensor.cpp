@@ -17,26 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Arduino.h>
 #include "current_sensor.h"
 
 CurrentSensor::CurrentSensor() {
 	settings_manager = SettingsManager::getInstance();
-	ads = new Adafruit_ADS1115(ADS_ADDRESS);
-	ads->setGain(GAIN_ONE);
+	Serial.print("AMPS_PER_BIT: ");
+	Serial.print(MILLIAMPS_PER_BIT);
 }
 
 int16_t CurrentSensor::getCurrentMilliamps() {
-	return getAverageValue() * CURRENT_FACTOR - MILLIAMP_OFFSET;
-}
-
-
-int16_t CurrentSensor::getAverageValue() {
 	int32_t sum = 0;
-	uint8_t sample_count = settings_manager->get_sample_count();
+//	uint8_t sample_count = settings_manager->get_sample_count();
+	uint8_t sample_count = 200;
 
 	for (uint8_t i = 0; i < sample_count; i++) {
-		sum += ads->readADC_Differential_0_1();
+		sum += analogRead(A7) - 511;
 	}
 
-	return sum / sample_count;
+	return sum * MILLIAMPS_PER_BIT / sample_count - CURRENT_OFFSET;
 }
